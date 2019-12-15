@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,28 @@ namespace PerfectChannel.WebApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
+        }
+
+        [HttpPost]
+        public ActionResult<ToDo> CreateNewTask([FromBody] ToDo newTodo)
+        {
+            int newId = 0;
+            if (_cache.TryGetValue(ToDoListKey, out List<ToDo> res))
+            {
+                var maxId = res.Max(t => t.Id);
+                newId = maxId + 1;
+                newTodo.Id = newId;
+                res.Add(newTodo);
+            }
+            else
+            {
+                var lst = new List<ToDo>();
+                newTodo.Id = 1;
+                lst.Add(newTodo);
+                _cache.Set(ToDoListKey, lst);
+            }
+
+            return CreatedAtRoute("todo", new { id = newTodo.Id }, newTodo);
         }
 
 

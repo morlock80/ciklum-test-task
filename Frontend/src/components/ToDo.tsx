@@ -1,29 +1,25 @@
-import React, {FC} from 'react';
+import React from 'react';
+import { History } from 'history';
+import _ from 'lodash';
+import {ToDo} from'./../types/todoInterface';
 
 
-
-export interface ToDo {
-    id: number;
-    title: string;
-    completed: boolean;
-}
-
-type NewType = {
-    todolist: ToDo[]
+type ToDoList = {
+    todolist: ToDo[],
+    history : History
 };
 
 
-export class ToDoControl extends React.Component<NewType>{
+export class ToDoControl extends React.Component<ToDoList>{
 
     handleEdit = (todoId: number) => (e: React.MouseEvent) => {
-        console.log('button clicked for '+ todoId);
+        this.props.history.push(`/todos/${todoId}`);
     }
     render(){
-    const {todolist} = this.props;
-    const pending = todolist.filter((element, index, array)=> {
+    const pending = this.props.todolist.filter((element, index, array)=> {
         return !element.completed;
     });
-    const completed = todolist.filter((element, index, array)=> {
+    const completed = this.props.todolist.filter((element, index, array)=> {
         return element.completed;
     });
     return <div>
@@ -32,21 +28,25 @@ export class ToDoControl extends React.Component<NewType>{
                 <ul>
                     {
                         pending.map(todo => {
+                            return <li>
+                                <div className ='row'>
+                                 <div className = 'col-sm'>{todo.title}</div>
+                                 <div className = 'col-sm'><button className ='button' onClick ={this.handleEdit(todo.id)}>Edit</button></div>
+                                </div></li>
+                        })
+                    }
+                </ul>
+            </div>
+            <div>
+                <h2> Completed todos</h2>
+                <ul>
+                    {
+                        completed.map(todo => {
                             return <li>{todo.title}</li>
                         })
                     }
                 </ul>
             </div>
-        <div>
-            <h2> Completed todos</h2>
-            <ul>
-                {
-                    completed.map(todo => {
-                        return <li>{todo.title}</li>
-                    })
-                }
-            </ul>
-        </div>
-    </div>
+            </div>
     }
 }
