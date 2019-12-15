@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,7 @@ namespace PerfectChannel.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMemoryCache();
             
             ConfigureCors(services);
         }
@@ -30,6 +32,7 @@ namespace PerfectChannel.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
 
             app.UseHttpsRedirection();
 
